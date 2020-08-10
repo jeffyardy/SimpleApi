@@ -16,21 +16,23 @@ using MyWebAPI.Models;
 
 namespace MyWebAPI.Controllers
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly BookStoresDBContext _context;
         private readonly JWTSettings _jWTSettings;
-        public UsersController(BookStoresDBContext context, IOptions<JWTSettings> jwtSettings)
+        public UsersController(BookStoresDBContext context, JWTSettings jwtSettings)
         {
             _context = context;
-            _jWTSettings = jwtSettings.Value;
+            _jWTSettings = jwtSettings;
             
         }
 
+
         // GET: api/Users
+        //[Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -38,6 +40,7 @@ namespace MyWebAPI.Controllers
         }
 
         // GET: api/Users/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(string id)
         {
@@ -51,6 +54,7 @@ namespace MyWebAPI.Controllers
             return user;
         }
 
+        [Authorize]
         [HttpGet("GetUser")]
         public async Task<ActionResult<User>> GetUser()
         {
@@ -68,14 +72,14 @@ namespace MyWebAPI.Controllers
         }
 
 
-        [HttpGet("Login")]
+        [HttpPost("Login")]
         public async Task<ActionResult<UserWithToken>> Login([FromBody] User user)
         {
 
             user = await _context.Users
-                        .Include(u => u.Job)
                         .Where(u => u.UserId == user.UserId && u.Password == user.Password).FirstOrDefaultAsync();
-            
+            user.Password = null;
+
             UserWithToken userWithToken = new UserWithToken(user);
 
             if (userWithToken == null)
@@ -104,6 +108,7 @@ namespace MyWebAPI.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(string id, User user)
         {
@@ -136,6 +141,7 @@ namespace MyWebAPI.Controllers
         // POST: api/Users
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
@@ -160,6 +166,7 @@ namespace MyWebAPI.Controllers
         }
 
         // DELETE: api/Users/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(string id)
         {

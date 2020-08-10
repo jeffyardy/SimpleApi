@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace MyWebAPI.Models
 {
@@ -16,7 +18,10 @@ namespace MyWebAPI.Models
         public DateTime HireDate { get; set; }
         public string Token { get; set; }
 
+
         public virtual Job Job { get; set; }
         public virtual Publisher Pub { get; set; }
+
+        
     }
 }
